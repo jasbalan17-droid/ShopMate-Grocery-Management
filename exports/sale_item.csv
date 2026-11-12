@@ -1,0 +1,5 @@
+﻿id,sale_id,product_id,product_name,unit_price,quantity,subtotal
+1,1,4,Rice,120.0,2,240.0
+2,1,2,Lip balm,180.0,4,720.0
+3,2,2,Lip balm,180.0,1,180.0
+4,2,1,Sunscreen,250.0,2,500.0

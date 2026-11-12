@@ -1,0 +1,43 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Edit Product</h2>
+
+{% for message in get_flashed_messages() %}
+    <p class="message">{{ message }}</p>
+{% endfor %}
+
+<form method="POST">
+    <label>Product Name</label>
+    <input type="text" name="name"
+           value="{{ product.name }}" required maxlength="100">
+
+    <label>Category</label>
+    <input type="text" name="category"
+           value="{{ product.category or '' }}" maxlength="50">
+
+    <label>Price (₹)</label>
+    <input type="number" name="price"
+           value="{{ product.price }}" min="0.01"
+           step="0.01" required>
+
+    <label>Stock Quantity</label>
+    <input type="number" name="stock"
+           value="{{ product.stock }}" min="0"
+           step="1" required>
+
+    <label>Minimum Stock Alert Level</label>
+    <input type="number" name="min_stock"
+           value="{{ product.min_stock }}" min="0"
+           step="1" required>
+
+    <label>Expiry Date</label>
+    <input type="date" name="expiry_date"
+           value="{{ product.expiry_date.isoformat() if product.expiry_date else '' }}">
+
+    <button type="submit">Update Product</button>
+</form>
+
+<a href="{{ url_for('products') }}">← Back to Products</a>
+{% endblock %}

@@ -1,0 +1,269 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>ShopMate Billing</h1>
+
+<p>Create a bill and automatically update product stock.</p>
+
+{% for message in get_flashed_messages() %}
+    <p style="color: green; font-weight: bold;">{{ message }}</p>
+{% endfor %}
+
+<form method="POST" id="billingForm">
+
+    <table border="1" cellpadding="10" width="100%">
+
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Subtotal</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody id="billingRows">
+
+            <tr class="bill-row">
+
+                <td>
+                    <select name="product_id" class="product-select" required>
+                        <option value="">Select Product</option>
+
+                        {% for p in products %}
+                        <option value="{{ p.id }}" data-price="{{ p.price }}">
+                            {{ p.name }} (Stock: {{ p.stock }})
+                        </option>
+                        {% endfor %}
+
+                    </select>
+                </td>
+
+                <td>
+                    <input
+                        type="number"
+                        name="quantity"
+                        class="quantity-input"
+                        min="1"
+                        step="1"
+                        value="1"
+                        required
+                    >
+                </td>
+
+                <td class="price-output">₹0.00</td>
+
+                <td class="subtotal-output">₹0.00</td>
+
+                <td>
+                    <button type="button" class="remove-row">
+                        Remove
+                    </button>
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+    <br>
+
+    <button type="button" id="addRow">
+        + Add Another Product
+    </button>
+
+    <h2>Total Amount: ₹<span id="grandTotal">0.00</span></h2>
+
+    <button type="submit">
+        Save Bill
+    </button>
+
+</form>
+
+<a href="{{ url_for('products') }}">Back to Products</a>
+
+
+<!-- Template for additional product rows -->
+
+<template id="rowTemplate">
+
+    <tr class="bill-row">
+
+        <td>
+            <select name="product_id" class="product-select" required>
+                <option value="">Select Product</option>
+
+                {% for p in products %}
+                <option value="{{ p.id }}" data-price="{{ p.price }}">
+                    {{ p.name }} (Stock: {{ p.stock }})
+                </option>
+                {% endfor %}
+
+            </select>
+        </td>
+
+        <td>
+            <input
+                type="number"
+                name="quantity"
+                class="quantity-input"
+                min="1"
+                step="1"
+                value="1"
+                required
+            >
+        </td>
+
+        <td class="price-output">₹0.00</td>
+
+        <td class="subtotal-output">₹0.00</td>
+
+        <td>
+            <button type="button" class="remove-row">
+                Remove
+            </button>
+        </td>
+
+    </tr>
+
+</template>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const billingRows = document.getElementById("billingRows");
+
+    const addRowButton = document.getElementById("addRow");
+
+    const rowTemplate = document.getElementById("rowTemplate");
+
+    const grandTotal = document.getElementById("grandTotal");
+
+    const billingForm = document.getElementById("billingForm");
+
+
+    function calculateTotal() {
+
+        let total = 0;
+
+        document.querySelectorAll(".bill-row").forEach(function (row) {
+
+            const select = row.querySelector(".product-select");
+
+            const quantityInput = row.querySelector(".quantity-input");
+
+            const selectedOption = select.options[select.selectedIndex];
+
+            const price = Number(selectedOption.dataset.price) || 0;
+
+            const quantity = Number(quantityInput.value) || 0;
+
+            const subtotal = price * quantity;
+
+            row.querySelector(".price-output").textContent =
+                "₹" + price.toFixed(2);
+
+            row.querySelector(".subtotal-output").textContent =
+                "₹" + subtotal.toFixed(2);
+
+            total += subtotal;
+
+        });
+
+        grandTotal.textContent = total.toFixed(2);
+
+    }
+
+
+    addRowButton.addEventListener("click", function () {
+
+        const newRow = rowTemplate.content.cloneNode(true);
+
+        billingRows.appendChild(newRow);
+
+        calculateTotal();
+
+    });
+
+
+    billingRows.addEventListener("change", function (event) {
+
+        if (
+            event.target.classList.contains("product-select") ||
+            event.target.classList.contains("quantity-input")
+        ) {
+            calculateTotal();
+        }
+
+    });
+
+
+    billingRows.addEventListener("input", function (event) {
+
+        if (event.target.classList.contains("quantity-input")) {
+            calculateTotal();
+        }
+
+    });
+
+
+    billingRows.addEventListener("click", function (event) {
+
+        if (event.target.classList.contains("remove-row")) {
+
+            const rows = billingRows.querySelectorAll(".bill-row");
+
+            if (rows.length > 1) {
+                event.target.closest(".bill-row").remove();
+            } else {
+                alert("At least one product row is required.");
+            }
+
+            calculateTotal();
+
+        }
+
+    });
+
+
+    billingForm.addEventListener("submit", function (event) {
+
+        const rows = billingRows.querySelectorAll(".bill-row");
+
+        let valid = true;
+
+        rows.forEach(function (row) {
+
+            const product = row.querySelector(".product-select").value;
+
+            const quantity = Number(
+                row.querySelector(".quantity-input").value
+            );
+
+            if (!product || !Number.isInteger(quantity) || quantity < 1) {
+                valid = false;
+            }
+
+        });
+
+        if (!valid) {
+            event.preventDefault();
+            alert("Please select products and enter valid quantities.");
+        }
+
+    });
+
+
+    calculateTotal();
+
+});
+
+</script>
+
+{% endblock %}

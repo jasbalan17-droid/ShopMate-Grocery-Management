@@ -1,0 +1,77 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="report-heading">
+    <h1>Sales Report</h1>
+    <p>Track your grocery store sales and billing performance.</p>
+</div>
+
+<div class="report-cards">
+
+    <div class="report-card">
+        <h3>Today's Sales</h3>
+        <h2>₹{{ "%.2f"|format(today_sales) }}</h2>
+        <p>{{ today_bills_count }} bills generated</p>
+    </div>
+
+    <div class="report-card">
+        <h3>This Week's Sales</h3>
+        <h2>₹{{ "%.2f"|format(week_sales) }}</h2>
+        <p>{{ week_bills_count }} bills generated</p>
+    </div>
+
+    <div class="report-card">
+        <h3>This Month's Sales</h3>
+        <h2>₹{{ "%.2f"|format(month_sales) }}</h2>
+        <p>{{ month_bills_count }} bills generated</p>
+    </div>
+
+    <div class="report-card">
+        <h3>Items Sold Today</h3>
+        <h2>{{ items_sold }}</h2>
+        <p>Total quantities sold today</p>
+    </div>
+
+</div>
+
+<div class="recent-sales">
+    <h2>Recent Sales</h2>
+
+    {% if recent_bills %}
+    <div class="table-container">
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Bill Number</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for bill in recent_bills %}
+                <tr>
+                    <td>SM-{{ "%05d"|format(bill.id) }}</td>
+                    <td>{{ bill.created_at.strftime("%d-%m-%Y") }}</td>
+                    <td>{{ bill.created_at.strftime("%I:%M %p") }}</td>
+                    <td>₹{{ "%.2f"|format(bill.total) }}</td>
+                    <td>
+                        <a href="{{ url_for('receipt', sale_id=bill.id) }}">
+                            View Receipt
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p>No sales records available yet.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

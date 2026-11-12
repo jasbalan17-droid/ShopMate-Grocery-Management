@@ -1,0 +1,5 @@
+﻿id,name,category,price,stock,min_stock,received_date,expiry_date
+1,Sunscreen,Skincare,250.0,78,50,2026-10-10,2027-12-12
+2,Lip balm,Skincare,180.0,45,35,2026-10-10,2027-12-12
+3,Shampoo,Hair care,200.0,20,36,2026-10-10,2029-05-09
+4,Rice,Grocery,120.0,0,5,2026-11-05,2026-11-12

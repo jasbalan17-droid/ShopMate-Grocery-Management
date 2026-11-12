@@ -1,0 +1,88 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>ShopMate Dashboard</h1>
+
+<p>Welcome to your Grocery Shop Management System.</p>
+
+<div class="dashboard-cards">
+
+    <div class="dashboard-card">
+        <h3>Total Products</h3>
+        <h2>{{ total_products }}</h2>
+        <a href="{{ url_for('products') }}">View Products</a>
+    </div>
+
+    <div class="dashboard-card">
+        <h3>Low Stock Items</h3>
+        <h2>{{ low_stock|length }}</h2>
+        <p>Products that need restocking.</p>
+    </div>
+
+    <div class="dashboard-card">
+        <h3>Expired Products</h3>
+        <h2>{{ expired|length }}</h2>
+        <p>Products that have expired.</p>
+    </div>
+
+    <div class="dashboard-card">
+        <h3>Sell Soon</h3>
+        <h2>{{ sell_soon|length }}</h2>
+        <p>Products expiring within 2 days.</p>
+    </div>
+
+</div>
+
+<h2>Low Stock Alerts</h2>
+
+{% if low_stock %}
+
+<table border="1" cellpadding="8">
+    <tr>
+        <th>Product</th>
+        <th>Current Stock</th>
+        <th>Minimum Stock</th>
+    </tr>
+
+    {% for p in low_stock %}
+    <tr>
+        <td>{{ p.name }}</td>
+        <td>{{ p.stock }}</td>
+        <td>{{ p.min_stock }}</td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+{% else %}
+
+<p>All products have sufficient stock.</p>
+
+{% endif %}
+
+
+<h2>Expiry Alerts</h2>
+
+{% if expired or sell_soon %}
+
+<ul>
+
+    {% for p in expired %}
+    <li>{{ p.name }} — Expired</li>
+    {% endfor %}
+
+    {% for p in sell_soon %}
+    <li>{{ p.name }} — Sell soon</li>
+    {% endfor %}
+
+</ul>
+
+{% else %}
+
+<p>No expiry alerts currently.</p>
+
+{% endif %}
+
+{% endblock %}

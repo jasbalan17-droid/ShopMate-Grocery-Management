@@ -1,0 +1,66 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="home-container">
+
+    <div class="home-content">
+
+        <p class="home-tag">SMART GROCERY MANAGEMENT SYSTEM</p>
+
+        <h1>Welcome to <span>ShopMate</span></h1>
+
+        <h2>
+            Smart Shop Management and Freshness Assistant
+            for Grocery Stores
+        </h2>
+
+        <p class="home-description">
+            Manage your grocery store with ease.
+            Track products, monitor expiry dates,
+            manage billing and receive stock alerts
+            all in one place.
+        </p>
+
+        <div class="home-buttons">
+
+            <a href="{{ url_for('dashboard') }}" class="home-button">
+                Get Started →
+            </a>
+
+            <a href="{{ url_for('products') }}" class="secondary-button">
+                View Products
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="home-features">
+
+        <div class="feature-card">
+            <h3>📦 Inventory Management</h3>
+            <p>Add, edit and manage grocery products.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>🧾 Smart Billing</h3>
+            <p>Create bills and automatically update stock.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>⏰ Freshness Alerts</h3>
+            <p>Monitor expiry dates and identify products to sell soon.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>📊 Stock Monitoring</h3>
+            <p>Track low-stock products and manage inventory.</p>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

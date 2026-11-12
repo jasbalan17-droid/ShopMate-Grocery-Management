@@ -1,0 +1,53 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Add Product</h2>
+
+{% for message in get_flashed_messages() %}
+    <p style="color:red;">{{ message }}</p>
+{% endfor %}
+
+<form method="POST" id="productForm">
+
+    <p>
+        <label>Product Name:</label>
+        <input type="text" name="name" required maxlength="100">
+    </p>
+
+    <p>
+        <label>Category:</label>
+        <input type="text" name="category" maxlength="50">
+    </p>
+
+    <p>
+        <label>Price (₹):</label>
+        <input type="number" name="price"
+               step="0.01" min="0.01" required>
+    </p>
+
+    <p>
+        <label>Stock Quantity:</label>
+        <input type="number" name="stock"
+               min="0" step="1" required>
+    </p>
+
+    <p>
+        <label>Minimum Stock Alert:</label>
+        <input type="number" name="min_stock"
+               min="0" step="1" value="5" required>
+    </p>
+
+    <p>
+        <label>Expiry Date:</label>
+        <input type="date" name="expiry_date">
+    </p>
+
+    <button type="submit">Save Product</button>
+
+</form>
+
+<a href="{{ url_for('products') }}">Back to Products</a>
+
+{% endblock %}

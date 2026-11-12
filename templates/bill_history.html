@@ -1,0 +1,92 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="report-heading">
+    <h1>Bill History</h1>
+    <p>View and manage all your previous customer bills.</p>
+</div>
+
+<div class="history-container">
+
+    <div class="history-header">
+        <div>
+            <h2>Previous Transactions</h2>
+            <p>All generated customer bills are displayed here.</p>
+        </div>
+
+        <a href="{{ url_for('billing') }}" class="history-create-btn">
+            + Create New Bill
+        </a>
+    </div>
+
+    {% if bills %}
+
+    <div class="table-container">
+
+        <table class="history-table">
+
+            <thead>
+                <tr>
+                    <th>Bill Number</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Total Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for bill in bills %}
+
+                <tr>
+                    <td>
+                        <strong>SM-{{ "%05d"|format(bill.id) }}</strong>
+                    </td>
+
+                    <td>
+                        {{ bill.created_at.strftime("%d-%m-%Y") }}
+                    </td>
+
+                    <td>
+                        {{ bill.created_at.strftime("%I:%M %p") }}
+                    </td>
+
+                    <td class="bill-amount">
+                        ₹{{ "%.2f"|format(bill.total) }}
+                    </td>
+
+                    <td>
+                        <a href="{{ url_for('receipt', sale_id=bill.id) }}"
+                           class="view-receipt-btn">
+                            View / Print
+                        </a>
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-history">
+        <h3>🧾 No Bills Found</h3>
+        <p>You haven't generated any customer bills yet.</p>
+
+        <a href="{{ url_for('billing') }}" class="history-create-btn">
+            Create Your First Bill
+        </a>
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
