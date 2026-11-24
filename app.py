@@ -15,24 +15,22 @@ from flask_sqlalchemy import SQLAlchemy
 # ---------------- APP CONFIGURATION ----------------
 
 
+
 load_dotenv()
 
 app = Flask(__name__)
+database_url = os.environ.get("DATABASE_URL")
 
-database_url = os.environ.get(
-    "DATABASE_URL",
-    "sqlite:///shopmate.db"
-)
-
-# Support PostgreSQL connection URLs
-if database_url.startswith("postgres://"):
-    database_url = database_url.replace(
-        "postgres://",
-        "postgresql://",
-        1
-    )
+if database_url:
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace(
+            "postgres://", "postgresql://", 1
+        )
+else:
+    database_url = "sqlite:///shopmate.db"
 
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+
 app.config["SECRET_KEY"] = os.environ.get(
     "SECRET_KEY",
     "shopmate-development-key"
@@ -44,8 +42,6 @@ if database_url.startswith("sqlite"):
     }
 
 db = SQLAlchemy(app)
-
-
 
 # ---------------- PRODUCT DATABASE ----------------
 
