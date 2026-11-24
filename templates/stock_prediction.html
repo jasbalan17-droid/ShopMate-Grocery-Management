@@ -1,0 +1,97 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <div class="page-head">
+        <div>
+            <h2>Smart Stock Prediction</h2>
+            <p>Understand when your products may run out.</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>How does it work?</h3>
+        <p>
+            ShopMate analyses the last 30 days of sales
+            and estimates how many days your current stock
+            will last.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>Product Predictions</h3>
+
+        {% if predictions %}
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Current Stock</th>
+                        <th>Sold in 30 Days</th>
+                        <th>Average Daily Sales</th>
+                        <th>Estimated Days Left</th>
+                        <th>Prediction</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in predictions %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+
+                        <td>{{ item.product.stock }}</td>
+
+                        <td>{{ item.total_sold }}</td>
+
+                        <td>{{ item.average_daily_sales }}</td>
+
+                        <td>
+                            {% if item.days_remaining is not none %}
+                                {{ item.days_remaining }} days
+                            {% else %}
+                                Not available
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <span class="status-badge">
+                                {{ item.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+        {% else %}
+
+        <p>No products available. Add products to start.</p>
+
+        {% endif %}
+
+    </div>
+
+    <div class="card">
+        <h3>Prediction Guide</h3>
+
+        <p><strong>Urgent Restock:</strong> Stock may last 3 days or less.</p>
+
+        <p><strong>Restock Soon:</strong> Stock may last 4-7 days.</p>
+
+        <p><strong>Low Stock:</strong> Stock is at or below your minimum level, with no recent sales data.</p>
+
+        <p><strong>Stock Available:</strong> Current stock is estimated to last more than 7 days.</p>
+
+        <p><strong>No Sales Data:</strong> No sales were recorded in the last 30 days.</p>
+    </div>
+
+</div>
+
+{% endblock %}

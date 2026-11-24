@@ -514,6 +514,88 @@ def sales_report():
         recent_bills=recent_bills
     )
 
+# ---------------- SMART LOW-STOCK PREDICTION ----------------
+
+@app.route("/stock-prediction")
+def stock_prediction():
+
+    today = date.today()
+    thirty_days_ago = datetime.now() - timedelta(days=30)
+
+    products = Product.query.order_by(Product.name).all()
+
+    predictions = []
+
+    for product in products:
+
+        # Find sales of this product in the last 30 days
+        sales_items = (
+            SaleItem.query
+            .join(Sale, SaleItem.sale_id == Sale.id)
+            .filter(
+                SaleItem.product_id == product.id,
+                Sale.created_at >= thirty_days_ago
+            )
+            .all()
+        )
+
+        total_sold = sum(item.quantity for item in sales_items)
+
+        average_daily_sales = total_sold / 30
+
+        if average_daily_sales > 0:
+
+            days_remaining = product.stock / average_daily_sales
+
+            if days_remaining <= 3:
+                prediction_status = "Urgent Restock"
+
+            elif days_remaining <= 7:
+                prediction_status = "Restock Soon"
+
+            else:
+                prediction_status = "Stock Available"
+
+        else:
+
+            days_remaining = None
+
+            if product.stock <= product.min_stock:
+                prediction_status = "Low Stock"
+
+            else:
+                prediction_status = "No Sales Data"
+
+        predictions.append({
+            "product": product,
+            "total_sold": total_sold,
+            "average_daily_sales": round(average_daily_sales, 2),
+            "days_remaining": (
+                round(days_remaining, 1)
+                if days_remaining is not None else None
+            ),
+            "status": prediction_status
+        })
+
+    # Show products that need attention first
+    priority = {
+        "Urgent Restock": 1,
+        "Restock Soon": 2,
+        "Low Stock": 3,
+        "Stock Available": 4,
+        "No Sales Data": 5
+    }
+
+    predictions.sort(
+        key=lambda item: priority[item["status"]]
+    )
+
+    return render_template(
+        "stock_prediction.html",
+        predictions=predictions
+    )
+
+
 
 # ---------------- RUN APPLICATION ----------------
 
