@@ -116,6 +116,9 @@ class SaleItem(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
 
     subtotal = db.Column(db.Float, nullable=False)
+    # Create database tables when the application starts
+with app.app_context():
+    db.create_all()
 
 
 
